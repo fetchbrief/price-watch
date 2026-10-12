@@ -75,6 +75,9 @@ def main() -> None:
     from fetch_data import fetch_json
 
     try:
+        # 先校验配置再联网：没配密钥就没必要发请求，也让失败原因一眼可见。
+        _get_client()
+
         data = fetch_json("https://httpbin.org/json")
         report = generate_report(data)
     except (RuntimeError, ValueError) as exc:

@@ -6,6 +6,9 @@ __pycache__/
 .venv/
 *.pyc
 
+# 测试缓存
+.pytest_cache/
+
 # 日志
 *.log
 
