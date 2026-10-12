@@ -72,13 +72,13 @@ def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
     # 延迟 import，避免只想要报告函数时也触发网络请求。
-    from fetch_data import fetch_json
+    from fetch_data import PLACEHOLDER_URL, fetch_json
 
     try:
         # 先校验配置再联网：没配密钥就没必要发请求，也让失败原因一眼可见。
         _get_client()
 
-        data = fetch_json("https://httpbin.org/json")
+        data = fetch_json(PLACEHOLDER_URL)
         report = generate_report(data)
     except (RuntimeError, ValueError) as exc:
         raise SystemExit(f"生成报告失败：{exc}")

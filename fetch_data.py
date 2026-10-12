@@ -15,6 +15,11 @@ logger = logging.getLogger(__name__)
 DEFAULT_TIMEOUT = 10  # 秒
 DEFAULT_HEADERS = {"User-Agent": "price-watch/0.1 (+https://github.com/fetchbrief)"}
 
+# 占位数据源：GitHub 官方用户接口。公开、无需登录、不含隐私数据。
+# 换真实数据源时，只改这一处即可（其余文件都从这里 import）。
+# 注意：不带 User-Agent 会被 GitHub 直接拒绝（403），所以 DEFAULT_HEADERS 不能省。
+PLACEHOLDER_URL = "https://api.github.com/users/fetchbrief"
+
 
 def fetch_json(url: str, timeout: int = DEFAULT_TIMEOUT) -> dict:
     """抓取一个公开的 JSON 接口，返回解析后的字典。
@@ -45,12 +50,8 @@ def fetch_json(url: str, timeout: int = DEFAULT_TIMEOUT) -> dict:
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
-    # 占位数据源：httpbin 的回显接口。公开、无需登录、不含任何隐私数据。
-    # 换成真实数据源时，只需要替换这一行 URL。
-    url = "https://httpbin.org/json"
-
     try:
-        data = fetch_json(url)
+        data = fetch_json(PLACEHOLDER_URL)
     except (requests.RequestException, ValueError) as exc:
         # 抓不到就如实失败，不用假数据兜底。
         raise SystemExit(f"抓取失败：{exc}")

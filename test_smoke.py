@@ -3,7 +3,7 @@
 跑法：
     pytest test_smoke.py -v
 
-需要联网（会请求 httpbin.org，公开接口，无需登录）。
+需要联网（会请求 api.github.com，公开接口，无需登录）。
 """
 
 import os
@@ -11,10 +11,9 @@ import subprocess
 import sys
 from pathlib import Path
 
-from fetch_data import fetch_json
+from fetch_data import PLACEHOLDER_URL, fetch_json
 
 PROJECT_ROOT = Path(__file__).resolve().parent
-PLACEHOLDER_URL = "https://httpbin.org/json"
 
 
 def test_fetch_json_gets_public_data():
@@ -22,7 +21,7 @@ def test_fetch_json_gets_public_data():
     data = fetch_json(PLACEHOLDER_URL)
 
     assert isinstance(data, dict), f"期望 dict，实际是 {type(data).__name__}"
-    assert data, "httpbin 返回了空字典，说明没真正抓到数据"
+    assert data, "接口返回了空字典，说明没真正抓到数据"
 
 
 def test_missing_api_key_exits_nonzero():
