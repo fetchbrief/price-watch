@@ -1,0 +1,15 @@
+# 密钥 / 本地配置
+.env
+
+# Python
+__pycache__/
+.venv/
+*.pyc
+
+# 日志
+*.log
+
+# 隐私数据（防止以后误提交）
+my_portfolio.json
+my_mood.md
+history/
