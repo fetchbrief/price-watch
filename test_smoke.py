@@ -11,17 +11,28 @@ import subprocess
 import sys
 from pathlib import Path
 
-from fetch_data import PLACEHOLDER_URL, fetch_json
+from fetch_data import RATES_URL, fetch_json, extract_rates
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 
 
 def test_fetch_json_gets_public_data():
     """fetch_json 能从公开接口抓到 JSON 并解析成字典。"""
-    data = fetch_json(PLACEHOLDER_URL)
+    data = fetch_json(RATES_URL)
 
     assert isinstance(data, dict), f"期望 dict，实际是 {type(data).__name__}"
     assert data, "接口返回了空字典，说明没真正抓到数据"
+
+
+def test_extract_rates_returns_watched_symbols():
+    """extract_rates 能从原始返回里取出我们要盯的币种，且不夹带私货。"""
+    result = extract_rates(fetch_json(RATES_URL))
+
+    assert result["基准货币"] == "USD"
+    assert set(result["汇率"]) == {"CNY", "EUR", "JPY", "GBP", "HKD", "KRW"}
+    assert all(isinstance(v, (int, float)) and v > 0 for v in result["汇率"].values()), (
+        "汇率应当都是正数"
+    )
 
 
 def test_missing_api_key_exits_nonzero():
@@ -39,7 +50,10 @@ def test_missing_api_key_exits_nonzero():
         cwd=PROJECT_ROOT,
         env=env,
         capture_output=True,
-        text=True,
+        # 显式指定 UTF-8：脚本自己按 UTF-8 输出中文，若用系统默认编码（Windows 上是 GBK）
+        # 解码会直接抛 UnicodeDecodeError，proc.stdout 变 None。errors="replace" 兜住剩余风险。
+        encoding="utf-8",
+        errors="replace",
         timeout=60,
     )
 
